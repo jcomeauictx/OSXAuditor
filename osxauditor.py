@@ -632,7 +632,7 @@ def read_sqlite(path, table):
     return table from SQLite3 database
     '''
     connection = sqlite3.connect(path)
-    rows = list(connection.execute('SELECT * FROM %s', table))
+    rows = list(connection.execute('SELECT * FROM %s' % table))
     return rows
 
 def ParseSafariProfile(User, Path):
