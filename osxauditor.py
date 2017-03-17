@@ -627,6 +627,14 @@ def ParseFirefox():
                 if Profile[0] != '.' and os.path.isdir(os.path.join(UserFFProfilePath,  Profile)):
                     ParseFirefoxProfile(User, Profile)
 
+def read_sqlite(path, table):
+    '''
+    return table from SQLite3 database
+    '''
+    connection = sqlite3.connect(path)
+    rows = list(connection.execute('SELECT * FROM %s', table))
+    return rows
+
 def ParseSafariProfile(User, Path):
     ''' Parse the different plist and SQLite databases in a Safari profile '''
 
@@ -651,22 +659,27 @@ def ParseSafariProfile(User, Path):
                 PrintAndLog(DlStr, 'INFO')
 
     PrintAndLog(User + u'\'s Safari history', 'SUBSECTION')
-    HistoryPlistPath = os.path.join(Path, 'History.plist')
-    PrintAndLog(HistoryPlistPath.decode('utf-8'), 'DEBUG')
-
-    HistoryPlist = UniversalReadPlist(HistoryPlistPath)
-
-    if HistoryPlist:
-        if 'WebHistoryDates' in HistoryPlist:
-            History =  HistoryPlist['WebHistoryDates']
-            for H in History:
-                HStr = u''
-                if 'title' in H:
-                    HStr += unicode(H['title']) + u' - '
-                if 'diplayTitle' in H:
-                    HStr += unicode(H['diplayTitle']) + u' - '
-                HStr += unicode(H['']) + u'\n'
-                PrintAndLog(HStr, 'INFO')
+    if os.path.exists(os.path.join(Path, 'History.plist')):
+        HistoryPlistPath = os.path.join(Path, 'History.plist')
+        PrintAndLog(HistoryPlistPath.decode('utf-8'), 'DEBUG')
+        HistoryPlist = UniversalReadPlist(HistoryPlistPath)
+        if HistoryPlist:
+            if 'WebHistoryDates' in HistoryPlist:
+                History =  HistoryPlist['WebHistoryDates']
+                for H in History:
+                    HStr = u''
+                    if 'title' in H:
+                        HStr += unicode(H['title']) + u' - '
+                    if 'diplayTitle' in H:
+                        HStr += unicode(H['diplayTitle']) + u' - '
+                    elif 'displayTitle' in H:
+                        HStr += unicode(H['displayTitle']) + u' - '
+                    HStr += unicode(H['']) + u'\n'
+                    PrintAndLog(HStr, 'INFO')
+    elif os.path.exists(os.path.join(Path, 'History.db')):
+        HistoryPlistPath = os.path.join(Path, 'History.db')
+        PrintAndLog(HistoryPlistPath.decode('utf-8'), 'DEBUG')
+        HistoryPlist = read_sqlite(HistoryPlistPath, 'history_items')
 
     PrintAndLog(User + u'\'s Safari TopSites', 'SUBSECTION')
     TopSitesPlistPath = os.path.join(Path, 'TopSites.plist')
