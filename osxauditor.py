@@ -698,7 +698,7 @@ def ParseSafariProfile(User, Path):
                 TabStates = SessionWindows[0].get('TabStates', [])
                 if len(TabStates) > 0:
                     LastSession = TabStates[0]
-                    PrintAndLog(LastSession.get('TabURL', '').decode('utf-8') + u' - ' + binascii.hexlify(LastSession['SessionState']).decode('hex').decode('utf-8', 'ignore'), 'INFO')
+                    PrintAndLog(LastSession.get('TabURL', '').decode('utf-8') + u' - ' + binascii.hexlify(LastSession['SessionState']), 'INFO')
         except:
             PrintAndLog('EXCEPTION on LastSession for Safari !!! ', 'INFO')
 
