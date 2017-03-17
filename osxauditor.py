@@ -679,7 +679,10 @@ def ParseSafariProfile(User, Path):
     elif os.path.exists(os.path.join(Path, 'History.db')):
         HistoryPlistPath = os.path.join(Path, 'History.db')
         PrintAndLog(HistoryPlistPath.decode('utf-8'), 'DEBUG')
-        HistoryPlist = read_sqlite(HistoryPlistPath, 'history_items')
+        items = read_sqlite(HistoryPlistPath, 'history_items')
+        dates = read_sqlite(HistoryPlistPath, 'history_visits')
+        print('items: %s' % items)
+        print('dates: %s' % dates)
 
     PrintAndLog(User + u'\'s Safari TopSites', 'SUBSECTION')
     TopSitesPlistPath = os.path.join(Path, 'TopSites.plist')
