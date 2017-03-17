@@ -224,7 +224,7 @@ def PrintAndLog(LogStr, TYPE):
     global SYSLOG_SERVER
 
     if TYPE == 'INFO' or 'INFO_RAW':
-        print(u'[INFO] ' + LogStr)
+        print(u'[INFO],' + LogStr)
         logging.info(LogStr)
 
     elif TYPE == 'ERROR':
@@ -438,7 +438,7 @@ def ParseStartupItems(StartupItemsPath):
                 if Md5:
                     if Md5 not in HASHES:
                         HASHES.append(Md5)
-                    PrintAndLog(Md5 + u' '+ FilePath.decode('utf-8') + u' - ' + time.ctime(os.path.getmtime(FilePath)) + u' - ' + time.ctime(os.path.getctime(FilePath))+ u'\n', 'INFO')
+                    PrintAndLog(Md5 + u','+ FilePath.decode('utf-8') + u',' + time.ctime(os.path.getmtime(FilePath)) + u',' + time.ctime(os.path.getctime(FilePath))+ u'\n', 'INFO')
         NbStartupItems += 1
     if NbStartupItems == 0:
         PrintAndLog(StartupItemsPath.decode('utf-8') + u' is empty', 'INFO')
@@ -463,7 +463,7 @@ def ParseLaunchAgents(AgentsPath):
                 if Md5:
                     if Md5 not in HASHES:
                         HASHES.append(Md5)
-                    PrintAndLog(Md5 + u' '+ FilePath.decode('utf-8') + u' - ' + time.ctime(os.path.getmtime(FilePath)) + u' - ' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
+                    PrintAndLog(Md5 + u','+ FilePath.decode('utf-8') + u',' + time.ctime(os.path.getmtime(FilePath)) + u',' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
                 continue
             if 'ProgramArguments' in LaunchAgentPlist and 'Label' in LaunchAgentPlist:
                 FilePath = LaunchAgentPlist['ProgramArguments'][0]
@@ -471,7 +471,7 @@ def ParseLaunchAgents(AgentsPath):
                 if Md5:
                     if Md5 not in HASHES:
                         HASHES.append(Md5)
-                    PrintAndLog(Md5 + u' '+ FilePath.decode('utf-8') + u' - ' + time.ctime(os.path.getctime(FilePath)) + u' - ' + time.ctime(os.path.getmtime(FilePath)) + u'\n', 'INFO')
+                    PrintAndLog(Md5 + u','+ FilePath.decode('utf-8') + u',' + time.ctime(os.path.getctime(FilePath)) + u',' + time.ctime(os.path.getmtime(FilePath)) + u'\n', 'INFO')
                 if len(LaunchAgentPlist['ProgramArguments']) >= 3:
                     if any(x in LaunchAgentPlist['ProgramArguments'][2] for x in SuspiciousPlist):
                         PrintAndLog(LaunchAgentPlist['ProgramArguments'][2].decode('utf-8')+ u' in ' + LaunchAgentPlistpath.decode('utf-8') + u' looks suspicious', 'WARNING')
@@ -542,7 +542,7 @@ def HashDir(Title, Path):
             if Md5:
                 if Md5 not in HASHES:
                     HASHES.append(Md5)
-                PrintAndLog(Md5 +' '+ FilePath.decode('utf-8') + u' - ' + time.ctime(os.path.getmtime(FilePath)) + u' - ' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
+                PrintAndLog(Md5 +','+ FilePath.decode('utf-8') + u',' + time.ctime(os.path.getmtime(FilePath)) + u',' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
             NbFiles += 1
 
     if NbFiles == 0:
@@ -833,7 +833,7 @@ def ParsePackagesDir(PackagesDirPath):
                             if Md5:
                                 if Md5 not in HASHES:
                                     HASHES.append(Md5)
-                                PrintAndLog(Md5 + u' '+ FilePath.decode('utf-8') + u' - ' + time.ctime(os.path.getmtime(FilePath)) + u' - ' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
+                                PrintAndLog(Md5 + u','+ FilePath.decode('utf-8') + u',' + time.ctime(os.path.getmtime(FilePath)) + u',' + time.ctime(os.path.getctime(FilePath)) + u'\n', 'INFO')
                         else:
                             PrintAndLog(u'The CFBundleExecutable key in ' + PackagePlistPath.decode('utf-8') + u' is empty\n', 'ERROR')
                     else:
