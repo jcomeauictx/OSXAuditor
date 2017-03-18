@@ -695,7 +695,7 @@ def ParseSafariProfile(User, Path):
         for visit in visits:
             print(visit)
             visit = visit[:-1] + (visit[-1] + TIMESTAMP_OFFSET,)
-            PrintAndLog(','.join(visit), 'INFO')
+            PrintAndLog(','.join(map(str, visit)), 'INFO')
 
     PrintAndLog(User + u'\'s Safari TopSites', 'SUBSECTION')
     TopSitesPlistPath = os.path.join(Path, 'TopSites.plist')
