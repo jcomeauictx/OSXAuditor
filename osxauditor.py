@@ -4,9 +4,10 @@
 #  OS X Auditor
 #
 #  Author: Jean-Philippe Teissier ( @Jipe_ ) & al.
-#
+#  
 #  This work is licensed under the GNU General Public License
 #
+#  Modifications: jc@unternet.net
 
 __description__ = 'OS X Auditor'
 __author__ = '@Jipe_ & al.'
@@ -68,6 +69,14 @@ import platform
 import gzip
 
 VT_API_KEY  = os.getenv('VT_API_KEY', False)
+
+TIMESTAMP_OFFSET = 978307200  # 31 years and almost an hour
+# Actual time of visit to website: about 2017-03-17:20:26
+# >>> datetime.datetime.fromtimestamp(511489553.667061)          
+# datetime.datetime(1986, 3, 17, 19, 25, 53, 667061)
+# >>> datetime.datetime.fromtimestamp(511489553.667061+978307200)
+# datetime.datetime(2017, 3, 17, 20, 25, 53, 667061)
+# The above machine was on Eastern Daylight time at the time.
 
 try:
     from urllib.request import urlopen                          #python3
@@ -627,12 +636,12 @@ def ParseFirefox():
                 if Profile[0] != '.' and os.path.isdir(os.path.join(UserFFProfilePath,  Profile)):
                     ParseFirefoxProfile(User, Profile)
 
-def read_sqlite(path, table):
+def read_sqlite(path, sql):
     '''
-    return table from SQLite3 database
+    return query result from SQLite3 database
     '''
     connection = sqlite3.connect(path)
-    rows = list(connection.execute('SELECT * FROM %s' % table))
+    rows = connection.execute(sql)
     return rows
 
 def ParseSafariProfile(User, Path):
@@ -679,10 +688,13 @@ def ParseSafariProfile(User, Path):
     elif os.path.exists(os.path.join(Path, 'History.db')):
         HistoryPlistPath = os.path.join(Path, 'History.db')
         PrintAndLog(HistoryPlistPath.decode('utf-8'), 'DEBUG')
-        items = read_sqlite(HistoryPlistPath, 'history_items')
-        dates = read_sqlite(HistoryPlistPath, 'history_visits')
-        print('items: %s' % items)
-        print('dates: %s' % dates)
+        visits = read_sqlite(HistoryPlistPath,
+            'SELECT v.title, h.url, h.domain_expansion, v.visit_time'
+            ' FROM history_items AS h, history_visits AS v'
+            ' WHERE h.id=v.history_item')
+        for visit in visits:
+            visits[-1] += TIMESTAMP_OFFSET
+            PrintAndLog(','.join(visit), 'INFO')
 
     PrintAndLog(User + u'\'s Safari TopSites', 'SUBSECTION')
     TopSitesPlistPath = os.path.join(Path, 'TopSites.plist')
