@@ -67,6 +67,7 @@ import bz2
 import binascii
 import platform
 import gzip
+import datetime
 
 VT_API_KEY  = os.getenv('VT_API_KEY', False)
 
@@ -693,8 +694,10 @@ def ParseSafariProfile(User, Path):
             ' FROM history_items AS h, history_visits AS v'
             ' WHERE h.id=v.history_item')
         for visit in visits:
-            print(visit)
-            visit = visit[:-1] + (visit[-1] + TIMESTAMP_OFFSET,)
+            timestamp = visit[-1] + TIMESTAMP_OFFSET
+            visit_time = datetime.datetime.fromtimestamp(timestamp).strftime(
+                '%Y-%m-%d:%H:%M:%S.') + str(timestamp).split('.')[1]
+            visit = visit[:-1] + (visit_time,)
             PrintAndLog(','.join(map(str, visit)), 'INFO')
 
     PrintAndLog(User + u'\'s Safari TopSites', 'SUBSECTION')
